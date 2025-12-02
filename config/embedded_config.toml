@@ -24,7 +24,7 @@ axis_change_threshold = 0.003
 
 [connection]
 # CAN インターフェース名
-can_interface = "can0"
+can_interface = "can2"
 
 # 接続タイムアウト (ms)
 connection_timeout_ms = 5000
