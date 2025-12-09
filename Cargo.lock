@@ -1187,6 +1187,7 @@ dependencies = [
  "criterion",
  "futures",
  "gilrs",
+ "libc",
  "mockall",
  "num-traits",
  "proptest",

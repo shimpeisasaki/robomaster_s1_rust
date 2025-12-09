@@ -1,9 +1,10 @@
 /// Control system module for RoboMaster robot
 /// This module provides high-level control APIs
 
-use crate::can::{CanInterface, CommandCounters, MessageSplitter};
+use crate::can::{CanInterface, CommandCounters, MessageSplitter, MessageBuffer};
 use crate::command::{CommandBuilder, MovementParams, GimbalParams, LedColor};
 use crate::error::RoboMasterError;
+use crate::sensor::{SensorState, SharedSensorState, new_shared_sensor_state};
 use anyhow::Result;
 
 /// High-level RoboMaster robot controller
@@ -12,6 +13,8 @@ pub struct RoboMaster {
     command_builder: CommandBuilder,
     command_counters: CommandCounters,
     is_initialized: bool,
+    sensor_state: SharedSensorState,
+    message_buffer: MessageBuffer,
 }
 
 impl RoboMaster {
@@ -20,12 +23,16 @@ impl RoboMaster {
         let can_interface = CanInterface::new(interface_name)?;
         let command_builder = CommandBuilder::new();
         let command_counters = CommandCounters::default();
+        let sensor_state = new_shared_sensor_state();
+        let message_buffer = MessageBuffer::new();
 
         Ok(Self {
             can_interface,
             command_builder,
             command_counters,
             is_initialized: false,
+            sensor_state,
+            message_buffer,
         })
     }
 
@@ -109,6 +116,27 @@ impl RoboMaster {
     /// Receive messages and update internal state
     pub async fn receive_messages(&mut self) -> Result<(), RoboMasterError> {
         self.can_interface.receive_and_process(&mut self.command_counters).await
+    }
+
+    /// Receive messages and update sensor data
+    pub async fn receive_sensor_data(&mut self) -> Result<(), RoboMasterError> {
+        self.can_interface
+            .receive_and_process_sensors(
+                &mut self.command_counters,
+                &self.sensor_state,
+                &mut self.message_buffer,
+            )
+            .await
+    }
+
+    /// Get a copy of the current sensor state
+    pub fn get_sensor_state(&self) -> Option<SensorState> {
+        self.sensor_state.read().ok().map(|s| s.clone())
+    }
+
+    /// Get shared reference to sensor state (for FFI)
+    pub fn get_shared_sensor_state(&self) -> SharedSensorState {
+        self.sensor_state.clone()
     }
 
     /// Stop the robot (send zero movement)

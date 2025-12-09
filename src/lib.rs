@@ -33,6 +33,7 @@ pub mod command;
 pub mod control;
 pub mod crc;
 pub mod error;
+pub mod sensor;
 
 // Optional modules
 #[cfg(feature = "cli")]
@@ -43,6 +44,7 @@ pub use crate::command::{MovementParams, GimbalParams, LedColor};
 pub use crate::can::{CanInterface, CommandCounters};
 pub use crate::control::{RoboMaster, MovementCommand, LedCommand, SensorData};
 pub use crate::error::RoboMasterError;
+pub use crate::sensor::{EscData, ImuData, AttitudeData, PositionData, VelocityData, SensorState};
 pub use crate::joystick::{JoystickController, JoystickManager, ControllerInput};
 
 #[cfg(feature = "cli")]
