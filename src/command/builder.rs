@@ -116,9 +116,9 @@ impl CommandBuilder {
         let mut header_command = Vec::new();
 
         // Convert movement parameters to protocol values
-        let linear_x = ((256.0 * params.vx + 1024.0) as i32).clamp(0, 2047) as u16;
-        let linear_y = ((256.0 * params.vy + 1024.0) as i32).clamp(0, 2047) as u16;
-        let angular_z = ((256.0 * params.vz + 1024.0) as i32).clamp(0, 2047) as u16;
+        let linear_x = ((1024.0 * params.vx + 1024.0) as i32).clamp(0, 2047) as u16;
+        let linear_y = ((1024.0 * params.vy + 1024.0) as i32).clamp(0, 2047) as u16;
+        let angular_z = ((1024.0 * params.vz + 1024.0) as i32).clamp(0, 2047) as u16;
 
         // Build command excluding CRC16 (last 2 bytes)
         for i in 0..(command_length - 2) {
