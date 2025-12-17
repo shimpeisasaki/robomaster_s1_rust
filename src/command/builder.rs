@@ -123,7 +123,7 @@ impl CommandBuilder {
         let vz_offset = if params.vz > 0.0 { deadzone } else if params.vz < 0.0 { -deadzone } else { 0.0 };
 
         // Gain adjustment: 1024.0 * (1.5 / 1.09) approx 1409.0
-        let gain = 1409.0;
+        let gain = 2000.0;
         let linear_x = ((gain * (params.vx + vx_offset) + 1024.0) as i32).clamp(0, 2047) as u16;
         let linear_y = ((gain * (params.vy + vy_offset) + 1024.0) as i32).clamp(0, 2047) as u16;
         let angular_z = ((gain * (params.vz + vz_offset) + 1024.0) as i32).clamp(0, 2047) as u16;
