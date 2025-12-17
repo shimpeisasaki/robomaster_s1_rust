@@ -116,15 +116,17 @@ impl CommandBuilder {
         let mut header_command = Vec::new();
 
         // Convert movement parameters to protocol values
-        // Deadzone compensation: Add offset corresponding to 0.15 m/s to overcome static friction
-        let deadzone = 0.15;
+        // Deadzone compensation: Add offset corresponding to 0.2 m/s to overcome static friction
+        let deadzone = 0.2;
         let vx_offset = if params.vx > 0.0 { deadzone } else if params.vx < 0.0 { -deadzone } else { 0.0 };
         let vy_offset = if params.vy > 0.0 { deadzone } else if params.vy < 0.0 { -deadzone } else { 0.0 };
         let vz_offset = if params.vz > 0.0 { deadzone } else if params.vz < 0.0 { -deadzone } else { 0.0 };
 
-        let linear_x = ((1024.0 * (params.vx + vx_offset) + 1024.0) as i32).clamp(0, 2047) as u16;
-        let linear_y = ((1024.0 * (params.vy + vy_offset) + 1024.0) as i32).clamp(0, 2047) as u16;
-        let angular_z = ((1024.0 * (params.vz + vz_offset) + 1024.0) as i32).clamp(0, 2047) as u16;
+        // Gain adjustment: 1024.0 * (1.5 / 1.09) approx 1409.0
+        let gain = 1409.0;
+        let linear_x = ((gain * (params.vx + vx_offset) + 1024.0) as i32).clamp(0, 2047) as u16;
+        let linear_y = ((gain * (params.vy + vy_offset) + 1024.0) as i32).clamp(0, 2047) as u16;
+        let angular_z = ((gain * (params.vz + vz_offset) + 1024.0) as i32).clamp(0, 2047) as u16;
 
         // Build command excluding CRC16 (last 2 bytes)
         for i in 0..(command_length - 2) {
