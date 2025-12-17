@@ -117,15 +117,15 @@ impl CommandBuilder {
 
         // Convert movement parameters to protocol values
         // Deadzone compensation: Add offset corresponding to 0.2 m/s to overcome static friction
-        let deadzone = 0.5;
+        let deadzone = 0.2;
         let vx_offset = if params.vx > 0.0 { deadzone } else if params.vx < 0.0 { -deadzone } else { 0.0 };
         let vy_offset = if params.vy > 0.0 { deadzone } else if params.vy < 0.0 { -deadzone } else { 0.0 };
         let vz_offset = if params.vz > 0.0 { deadzone } else if params.vz < 0.0 { -deadzone } else { 0.0 };
 
         // Gain adjustment: 1024.0 * (1.5 / 1.09) approx 1409.0
-        let gain_x = 2000.0;
-        let gain_y = 2000.0;
-        let gain_z = 2000.0;
+        let gain_x = 256.0;
+        let gain_y = 256
+        let gain_z = 256.0;
         let linear_x = ((gain_x * (params.vx + vx_offset) + 1024.0) as i32).clamp(0, 2047) as u16;
         let linear_y = ((gain_y * (params.vy + vy_offset) + 1024.0) as i32).clamp(0, 2047) as u16;
         let angular_z = ((gain_z * (params.vz + vz_offset) + 1024.0) as i32).clamp(0, 2047) as u16;
