@@ -46,6 +46,7 @@ pub use crate::can::{CanInterface, CommandCounters};
 pub use crate::control::{RoboMaster, MovementCommand, LedCommand, SensorData};
 pub use crate::error::RoboMasterError;
 pub use crate::sensor::{EscData, ImuData, AttitudeData, PositionData, VelocityData, SensorState};
+#[cfg(feature = "cli")]
 pub use crate::joystick::{JoystickController, JoystickManager, ControllerInput};
 
 #[cfg(feature = "cli")]
