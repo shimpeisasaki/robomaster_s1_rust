@@ -130,6 +130,8 @@ impl CommandBuilder {
         let linear_y = ((gain_y * (params.vy + vy_offset) + 1024.0) as i32).clamp(0, 2047) as u16;
         let angular_z = ((gain_z * (params.vz + vz_offset) + 1024.0) as i32).clamp(0, 2047) as u16;
 
+        println!("Twist Params - vx: {}, vy: {}, vz: {}", params.vx, params.vy, params.vz);
+
         // Build command excluding CRC16 (last 2 bytes)
         for i in 0..(command_length - 2) {
             if is_crc8_position(template, i) {
