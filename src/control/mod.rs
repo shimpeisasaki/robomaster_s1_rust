@@ -55,6 +55,15 @@ impl RoboMaster {
         Ok(())
     }
 
+    /// Send boot sequence explicitly (regardless of initialization state)
+    pub async fn send_boot_sequence(&mut self) -> Result<(), RoboMasterError> {
+        println!("Sending boot sequence...");
+        let boot_command = self.command_builder.build_boot_sequence()?;
+        let can_messages = MessageSplitter::split_command(&boot_command);
+        self.can_interface.send_messages(&can_messages)?;
+        Ok(())
+    }
+
     /// Ensure the robot is initialized before executing commands
     async fn ensure_initialized(&mut self) -> Result<(), RoboMasterError> {
         if !self.is_initialized {
