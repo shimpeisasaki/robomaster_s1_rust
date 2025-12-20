@@ -33,6 +33,9 @@ pub struct LedColor {
 /// Command builder for creating protocol messages
 pub struct CommandBuilder {
     command_table: Vec<Vec<u8>>,
+    pub gain_x: f32,
+    pub gain_y: f32,
+    pub gain_z: f32,
 }
 
 impl CommandBuilder {
@@ -40,7 +43,16 @@ impl CommandBuilder {
     pub fn new() -> Self {
         Self {
             command_table: get_command_table(),
+            gain_x: 300.0,
+            gain_y: 256.0,
+            gain_z: 256.0,
         }
+    }
+
+    pub fn set_gains(&mut self, x: f32, y: f32, z: f32) {
+        self.gain_x = x;
+        self.gain_y = y;
+        self.gain_z = z;
     }
 
     /// Build boot sequence commands
@@ -123,9 +135,9 @@ impl CommandBuilder {
         let vz_offset = if params.vz > 0.0 { deadzone } else if params.vz < 0.0 { -deadzone } else { 0.0 };
 
         // Gain adjustment: 1024.0 * (1.5 / 1.09) approx 1409.0
-        let gain_x = 300.0;
-        let gain_y = 256.0;
-        let gain_z = 256.0;
+        let gain_x = self.gain_x;
+        let gain_y = self.gain_y;
+        let gain_z = self.gain_z;
         let linear_x = ((gain_x * (params.vx + vx_offset) + 1024.0) as i32).clamp(0, 2047) as u16;
         let linear_y = ((gain_y * (params.vy + vy_offset) + 1024.0) as i32).clamp(0, 2047) as u16;
         let angular_z = ((gain_z * (params.vz + vz_offset) + 1024.0) as i32).clamp(0, 2047) as u16;

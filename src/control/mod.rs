@@ -72,6 +72,11 @@ impl RoboMaster {
         Ok(())
     }
 
+    /// Set movement gains
+    pub fn set_gains(&mut self, x: f32, y: f32, z: f32) {
+        self.command_builder.set_gains(x, y, z);
+    }
+
     /// Move the robot with specified parameters
     pub async fn move_robot(&mut self, movement: MovementParams) -> Result<(), RoboMasterError> {
         self.ensure_initialized().await?;
